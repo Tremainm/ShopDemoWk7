@@ -13,13 +13,14 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Button,
 } from 'react-native';
 
 import ProductItem from '../components/ProductItem';
 import AddEditProduct from '../components/AddEditProduct';
 import useProducts from '../hooks/useProducts';
 
-export default function InventoryScreen() {
+export default function InventoryScreen({navigation}) {
   const { products, loading, posting, fetchProducts, createProduct, updateProduct, deleteProduct } = useProducts();
 
   const [editingId, setEditingId] = useState(null);
@@ -72,6 +73,7 @@ export default function InventoryScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Inventory</Text>
+      <Button title="Browse Products" onPress={() => navigation.navigate('Browse')} />
 
       <AddEditProduct
         editingId={editingId}
