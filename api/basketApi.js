@@ -23,11 +23,11 @@ async function getBasketItems() {
 
 // Create a basket item by POSTing the provided item (expects JSON serializable item).
 // Returns parsed JSON response when available; throws on non-OK responses.
-async function addToBasket(item) {
+async function addToBasket(productId) {
   const res = await fetch(`${BASE_URL}/basket`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-    body: JSON.stringify(item),
+    body: JSON.stringify({ productId }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -36,13 +36,13 @@ async function addToBasket(item) {
   return res.json ? await res.json().catch(() => null) : null;
 }
 
-// Update an existing basket item by id using PUT. Body should contain the updated fields.
+// Update an existing basket items quantity by id using PUT. Body should contain the updated fields.
 // Throws on non-OK responses and returns parsed JSON when available.
-async function updateBasketItem(id, body) {
-  const res = await fetch(`${BASE_URL}/basket/${id}`, {
+async function updateBasketItemQuantity(productId, quantity) {
+  const res = await fetch(`${BASE_URL}/basket/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ productId, quantity }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -52,10 +52,11 @@ async function updateBasketItem(id, body) {
 }
 
 // Delete a basket item by id. Returns true on success, throws on failure.
-async function deleteBasketItem(id) {
-  const res = await fetch(`${BASE_URL}/basket/${id}`, {
+async function deleteBasketItem(productId) {
+  const res = await fetch(`${BASE_URL}/basket/`, {
     method: 'DELETE',
-    headers: { 'ngrok-skip-browser-warning': 'true' },
+    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+    body: JSON.stringify({ productId }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -67,6 +68,6 @@ async function deleteBasketItem(id) {
 export default {
   getBasketItems,
   addToBasket,
-  updateBasketItem,
+  updateBasketItemQuantity,
   deleteBasketItem,
 };

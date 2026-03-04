@@ -13,7 +13,7 @@
 
 import { useState } from 'react';
 import productApi from '../api/productApi';
-// import basketApi from '../api/basketApi';
+import basketApi from '../api/basketApi';
 
 export default function useBasket() {
   const [basket, setBasket] = useState([]);
@@ -27,8 +27,14 @@ export default function useBasket() {
     setLoading(true);
     try {
       const data = await basketApi.getBasketItems();
-      setBasket(Array.isArray(data) ? data : []);
-      return data;
+      // Expect backend returns { items: [{ productId: {...product fields...}, quantity }] }
+      const items = Array.isArray(data.items) ? data.items : [];
+      const mapped = items.map(item => ({
+        product: item.productId, // populated product object
+        quantity: item.quantity
+      }));
+      setBasket(mapped);
+      return mapped;
     } finally {
       setLoading(false);
     }
@@ -36,10 +42,10 @@ export default function useBasket() {
 
   // addToBasket: POST body to API, then refresh the list
   // - sets posting flag while request is in-flight
-  async function addToBasket(item) {
+  async function addToBasket(productId) {
     setPosting(true);
     try {
-      const res = await basketApi.addToBasket(item);
+      const res = await basketApi.addToBasket(productId);
       await fetchBasketItems();
       return res;
     } finally {
@@ -49,10 +55,10 @@ export default function useBasket() {
 
   // updateBasketItem: PUT to API for given id, then refresh list
   // - sets posting flag while request is in-flight
-  async function updateBasketItem(id, body) {
+  async function updateBasketItem(id, quantity) {
     setPosting(true);
     try {
-      const res = await basketApi.updateBasketItem(id, body);
+      const res = await basketApi.updateBasketItemQuantity(id, quantity);
       await fetchBasketItems();
       return res;
     } finally {

@@ -14,18 +14,29 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import ProductToBasket from '../components/ProductToBasket';
-import useProducts from '../hooks/useProducts';
+import BasketItem from '../components/BasketItem';
+import useBasket from '../hooks/useBasket';
 
-export default function BasketScreen() {
-  const { products, loading, fetchProducts } = useProducts();
+export default function BasketScreen({navigation}) {
+  const { basket, loading, fetchBasketItems, deleteBasketItem, updateBasketItem } = useBasket();
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchBasketItems();
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchBasketItems();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   function renderItem({ item }) {
-    return <ProductToBasket item={item} />;
+    return (
+      <BasketItem 
+        item={item.product} 
+        quantity={item.quantity}
+        onUpdateQuantity={updateBasketItem}
+        onDelete={deleteBasketItem}
+      />
+    );
   }
 
   return (
@@ -36,7 +47,13 @@ export default function BasketScreen() {
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <FlatList data={products} keyExtractor={(item, idx) => item._id || item.id || String(idx)} renderItem={renderItem} ListEmptyComponent={<Text style={styles.empty}>No products found.</Text>} contentContainerStyle={products.length === 0 ? styles.emptyContainer : null} />
+        <FlatList
+          data={basket.filter(item => item.product)}
+          keyExtractor={(item, idx) => item.product._id || item.product.id || String(idx)}
+          renderItem={renderItem}
+          ListEmptyComponent={<Text style={styles.empty}>Basket is empty.</Text>}
+          contentContainerStyle={basket.length === 0 ? styles.emptyContainer : null}
+        />
       )}
 
       <StatusBar style="auto" />

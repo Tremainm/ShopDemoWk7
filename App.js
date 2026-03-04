@@ -5,6 +5,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import HomeScreen from './screens/HomeScreen';
 import InventoryScreen from './screens/InventoryScreen';
@@ -12,16 +13,17 @@ import BrowserScreen from './screens/BrowserScreen';
 import BasketScreen from './screens/BasketScreen';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Inventory" component={InventoryScreen} options={{ title: 'Inventory' }} />
-        <Stack.Screen name="Browse" component={BrowserScreen} options={{ title: 'Browse Products' }} />
-        <Stack.Screen name="Basket" component={BasketScreen} options={{ title: 'Basket' }} />
-      </Stack.Navigator>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Inventory" component={InventoryScreen} />
+        <Tab.Screen name="Browse" component={BrowserScreen} />
+        <Tab.Screen name="Basket" component={BasketScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }

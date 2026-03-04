@@ -15,7 +15,7 @@ import {
   Button,
 } from 'react-native';
 
-import ProductToBasket from '../components/ProductToBasket';
+import BrowseProductItem from '../components/BrowseProductItem';
 import useProducts from '../hooks/useProducts';
 
 export default function BrowserScreen({navigation}) {
@@ -23,17 +23,22 @@ export default function BrowserScreen({navigation}) {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchProducts();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
 
   function renderItem({ item }) {
-    return <ProductToBasket item={item} />;
+    return <BrowseProductItem item={item} />;
   }
 
   return (
     <View style={styles.container}>
 
       <Text style={styles.header}>Products</Text>
-      <Button title="Basket" onPress={() => navigation.navigate('Basket')} />
+      {/* <Button title="Basket" onPress={() => navigation.navigate('Basket')} /> */}
 
       {loading ? (
         <ActivityIndicator size="large" />

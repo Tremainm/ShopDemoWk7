@@ -73,7 +73,7 @@ export default function InventoryScreen({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Inventory</Text>
-      <Button title="Browse Products" onPress={() => navigation.navigate('Browse')} />
+      {/* <Button title="Browse Products" onPress={() => navigation.navigate('Browse')} /> */}
 
       <AddEditProduct
         editingId={editingId}

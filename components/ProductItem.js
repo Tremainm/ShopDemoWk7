@@ -38,21 +38,16 @@ export default function ProductItem({ item, onEdit, onDelete }) {
   return (
     <View style={styles.item}>
       <Text style={styles.itemTitle}>{item.name || 'Unnamed'}</Text>
-      {item.price !== undefined && item.price !== null ? (
-        <Text style={styles.itemPrice}>{`€${item.price}`}</Text>
-      ) : null}
-      {item.description ? <Text style={styles.itemDesc}>{item.description}</Text> : null}
-      {item.image && (
-        <Image source={{ uri: item.image }} style={{ width: 100, height: 100, borderRadius: 6, marginTop: 10 }} />
+      {item.price !== undefined && item.price !== null && (
+        <Text style={styles.itemPrice}>€{item.price}</Text>
       )}
-
+      {item.description && <Text style={styles.itemDesc}>{item.description}</Text>}
+      {item.image && (
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
+      )}
       <View style={styles.itemButtons}>
-        <View style={styles.buttonWrap}>
-          <Button title="Edit" onPress={() => onEdit(item)} />
-        </View>
-        <View style={styles.buttonWrap}>
-          <Button title="Delete" color="#d9534f" onPress={onDeletePress} />
-        </View>
+        <Button title="Edit" onPress={() => onEdit(item)} />
+        <Button title="Delete" color="#d9534f" onPress={onDeletePress} />
       </View>
     </View>
   );
@@ -60,15 +55,16 @@ export default function ProductItem({ item, onEdit, onDelete }) {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 12,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 6,
-    marginVertical: 6,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginVertical: 8,
+    backgroundColor: '#fff',
   },
-  itemTitle: { fontSize: 16, fontWeight: '600' },
-  itemPrice: { color: '#333', marginTop: 4 },
-  itemDesc: { color: '#666', marginTop: 6 },
-  itemButtons: { flexDirection: 'row', marginTop: 10 },
-  buttonWrap: { marginRight: 8 },
+  itemTitle: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
+  itemPrice: { fontSize: 16, color: '#007AFF', marginBottom: 4 },
+  itemDesc: { fontSize: 14, color: '#666', marginBottom: 8 },
+  itemImage: { width: 100, height: 100, borderRadius: 8, marginVertical: 8 },
+  itemButtons: { flexDirection: 'row', gap: 8, marginTop: 8 },
 });
