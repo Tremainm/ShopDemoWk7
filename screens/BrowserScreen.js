@@ -23,6 +23,7 @@ export default function BrowserScreen({navigation}) {
 
   useEffect(() => {
     fetchProducts();
+    // Refetch products when screen is focused (e.g. after coming back from Inventory or Basket)
     const unsubscribe = navigation.addListener('focus', () => {
       fetchProducts();
     });

@@ -22,6 +22,7 @@ export default function BasketScreen({navigation}) {
 
   useEffect(() => {
     fetchBasketItems();
+    // Refetch basket items when screen is focused (e.g. after coming back from Inventory or Browse)
     const unsubscribe = navigation.addListener('focus', () => {
       fetchBasketItems();
     });
@@ -48,7 +49,7 @@ export default function BasketScreen({navigation}) {
         <ActivityIndicator size="large" />
       ) : (
         <FlatList
-          data={basket.filter(item => item.product)}
+          data={basket.filter(item => item.product)}  // removes any items with missing product info (if product was deleted from inventory but still in basket)
           keyExtractor={(item, idx) => item.product._id || item.product.id || String(idx)}
           renderItem={renderItem}
           ListEmptyComponent={<Text style={styles.empty}>Basket is empty.</Text>}

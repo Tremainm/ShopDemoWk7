@@ -36,7 +36,7 @@ export default function BasketItem({ item, quantity, onUpdateQuantity, onDelete 
         <View style={styles.quantityControl}>
           <Text style={styles.quantityLabel}>Qty: {quantity}</Text>
           <Button title="+" onPress={() => handleUpdateQuantity(quantity + 1, '+')} />
-          <Button title="-" color="#d9534f" onPress={() => handleUpdateQuantity(quantity - 1, '-')} />
+          <Button title="-" color="#FFA500" onPress={() => handleUpdateQuantity(quantity - 1, '-')} />
         </View>
         <Button title="Delete" color="#d9534f" onPress={handleDelete} />
       </View>
