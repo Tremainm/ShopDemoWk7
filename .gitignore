@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# google files
+google-services.json
+
 # Ignore nested ShopDemo copy
 ShopDemo/
 

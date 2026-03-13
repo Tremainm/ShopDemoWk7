@@ -10,6 +10,7 @@ import * as Notifications from 'expo-notifications';
 
 export default function useNotifications() {
   const [notifications, setNotifications] = useState([]);
+  const [expoPushToken, setExpoPushToken] = useState(null);
 
   useEffect(() => {
     // Configure notification behavior when the app is in the foreground.
@@ -29,11 +30,20 @@ export default function useNotifications() {
         console.warn('Push notification permissions not granted!');
         return;
       }
+      // Get the Expo push token for this device
+      try {
+        const pushTokenData = await Notifications.getExpoPushTokenAsync({
+          projectId: '31e23b72-28c1-4537-8702-57ac129dea32', // from app.json > extra.eas.projectId
+        });
+        console.log('Expo Push Token:', pushTokenData);
+        setExpoPushToken(pushTokenData.data);
+      } catch (e) {
+        console.error('Failed to get push token:', e);
+      }
     }
-    
     configurePushNotifications();
-
-    // Android requires a notification channel - without this, notifications are silently ignored.
+    
+    // Android requires a notification channel — without this, notifications are silently ignored.
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'Default',
@@ -59,6 +69,7 @@ export default function useNotifications() {
   }
 
   return {
+    expoPushToken,
     notifications,
     addNotification,
     removeNotification,

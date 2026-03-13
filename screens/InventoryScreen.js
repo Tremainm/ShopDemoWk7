@@ -13,21 +13,27 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
-  Button,
 } from 'react-native';
 
 import ProductItem from '../components/ProductItem';
 import AddEditProduct from '../components/AddEditProduct';
 import useProducts from '../hooks/useProducts';
+import useNotifications from '../hooks/useNotifications';
 
-export default function InventoryScreen({navigation}) {
+export default function InventoryScreen() {
   const { products, loading, posting, fetchProducts, createProduct, updateProduct, deleteProduct } = useProducts();
+  const { expoPushToken } = useNotifications();
 
   const [editingId, setEditingId] = useState(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+  // --- Simplified alternative: group all form fields into one state object ---
+  // const [form, setForm] = useState({ name: '', price: '', description: '', image: null });
+  // Update a single field with: setForm(prev => ({ ...prev, name: 'new value' }))
+  // Pass to AddEditProduct as: <AddEditProduct form={form} setForm={setForm} ... />
+  // (replaces the five individual useState calls above and reduces prop count)
 
   useEffect(() => {
     fetchProducts();
@@ -46,7 +52,24 @@ export default function InventoryScreen({navigation}) {
         Alert.alert('Success', 'Product updated');
       } else {
         await createProduct(body);
-        Alert.alert('Success', 'Product added');
+        //Alert.alert('Success', 'Product added');
+        if (expoPushToken) {
+          console.log('[Push] Sending to token:', expoPushToken);
+          fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: expoPushToken,
+              title: 'Store updated',
+              body: `${name.trim()} has been added. Browse the inventory to see the latest products!`,
+            }),
+          })
+            .then(res => res.json())
+            .then(data => console.log('[Push] Expo API response:', JSON.stringify(data)))
+            .catch(err => console.error('[Push] Fetch error:', err));
+        } else {
+          console.warn('[Push] No expoPushToken available yet');
+        }
       }
 
       setName('');
@@ -73,7 +96,6 @@ export default function InventoryScreen({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Inventory</Text>
-      {/* <Button title="Browse Products" onPress={() => navigation.navigate('Browse')} /> */}
 
       <AddEditProduct
         editingId={editingId}
@@ -114,23 +136,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginVertical: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 6,
-    padding: 10,
-    marginVertical: 6,
-  },
-  textArea: {
-    minHeight: 60,
-    textAlignVertical: 'top',
-  },
-  buttonsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  spacer: { width: 12 },
   empty: { textAlign: 'center', color: '#666', marginTop: 20 },
   emptyContainer: { flex: 1, justifyContent: 'center' },
 });
